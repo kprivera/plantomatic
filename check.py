@@ -7,8 +7,8 @@
 #
 
 
-import time, signal, sys
-sys.path.append('./SDL_Adafruit_ADS1x15')
+import time, signal, sys, json
+sys.path.append('/home/pi/plants/SDL_Adafruit_ADS1x15')
 
 import SDL_Adafruit_ADS1x15 
 
@@ -39,23 +39,12 @@ sps = 250  # 250 samples per second
 
 # Initialise the ADC using the default mode (use default I2C address)
 adc = SDL_Adafruit_ADS1x15.ADS1x15(ic=ADS1115)
-while (1):
 
-	# Read channels  in single-ended mode using the settings above
+moist = {
+	"c0": adc.readADCSingleEnded(0, gain, sps) / 1000,
+	"c1": adc.readADCSingleEnded(1, gain, sps) / 1000,
+	"c2": adc.readADCSingleEnded(2, gain, sps) / 1000,
+	"c3": adc.readADCSingleEnded(3, gain, sps) / 1000
+}
 
-	print ("--------------------")
-	voltsCh0 = adc.readADCSingleEnded(0, gain, sps) / 1000
-	rawCh0 = adc.readRaw(0, gain, sps) 
-	print ("Channel 0 =%.6fV raw=0x%4X dec=%d" % (voltsCh0, rawCh0, rawCh0))
-	voltsCh1 = adc.readADCSingleEnded(1, gain, sps) / 1000
-	rawCh1 = adc.readRaw(1, gain, sps) 
-	print ("Channel 1 =%.6fV raw=0x%4X dec=%d" % (voltsCh1, rawCh1, rawCh1))
-	voltsCh2 = adc.readADCSingleEnded(2, gain, sps) / 1000
-	rawCh2 = adc.readRaw(2, gain, sps) 
-	print ("Channel 2 =%.6fV raw=0x%4X dec=%d" % (voltsCh2, rawCh2, rawCh2))
-	voltsCh3 = adc.readADCSingleEnded(3, gain, sps) / 1000
-	rawCh3 = adc.readRaw(3, gain, sps) 
-	print ("Channel 3 =%.6fV raw=0x%4X dec=%d" % (voltsCh3, rawCh3, rawCh3))
-	print ("--------------------")
-
-	time.sleep(0.5)
+print(json.dumps(moist))
